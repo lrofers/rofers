@@ -222,4 +222,808 @@ button{font-family:inherit;cursor:none;border:none;background:none;}
 .footer-logo{font-family:var(--font-display);font-weight:700;font-size:18px;}
 .footer-logo span{color:var(--neon);}
 .footer-socials{display:flex;gap:14px;}
-.footer-socials a{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justif
+.footer-socials a{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;transition:border-color .3s var(--ease),color .3s var(--ease);}
+.footer-socials a:hover{border-color:var(--neon);color:var(--neon);}
+.footer-copy{font-size:13px;color:var(--muted-soft);}
+
+/* MOBILE MENU */
+.mobile-menu{position:fixed;inset:0;z-index:99;background:rgba(6,8,15,.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility .4s var(--ease);}
+.mobile-menu.open{opacity:1;visibility:visible;}
+.mobile-menu a{font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--muted);transition:color .3s var(--ease);}
+.mobile-menu a:hover{color:var(--neon);}
+
+/* ========== ADMIN PANEL ========== */
+/* Secret trigger — triple-click logo */
+.admin-overlay{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;
+  transition:opacity .4s var(--ease),visibility .4s var(--ease);
+}
+.admin-overlay.open{opacity:1;visibility:visible;}
+
+.admin-modal{
+  background:#0d1120;border:1px solid rgba(0,227,255,.25);
+  border-radius:24px;padding:40px;max-width:520px;width:90%;
+  box-shadow:0 0 60px rgba(0,227,255,.12),0 40px 80px -20px rgba(0,0,0,.8);
+  position:relative;
+}
+.admin-modal-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;
+}
+.admin-modal-header h2{
+  font-family:var(--font-display);font-size:20px;font-weight:700;
+  background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent;
+  display:flex;align-items:center;gap:10px;
+}
+.admin-modal-header h2 i{font-size:18px;color:var(--neon);background:none;-webkit-background-clip:unset;background-clip:unset;}
+.admin-close{
+  width:36px;height:36px;border-radius:50%;background:var(--surface);
+  border:1px solid var(--border);color:var(--muted);font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .3s,color .3s;cursor:pointer;
+}
+.admin-close:hover{border-color:var(--neon);color:var(--neon);}
+
+.admin-lock{
+  display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;
+  padding:20px 0;
+}
+.admin-lock-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--gradient-soft);border:1px solid rgba(0,227,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;color:var(--neon);
+  box-shadow:0 0 30px rgba(0,227,255,.15);
+}
+.admin-lock h3{font-family:var(--font-display);font-size:17px;margin-bottom:4px;}
+.admin-lock p{font-size:13.5px;color:var(--muted);}
+.admin-pw-field{
+  width:100%;padding:14px 18px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  color:var(--white);font-family:var(--font-mono);font-size:16px;
+  letter-spacing:4px;text-align:center;outline:none;
+  transition:border-color .3s var(--ease),box-shadow .3s var(--ease);
+}
+.admin-pw-field:focus{border-color:var(--neon);box-shadow:0 0 0 3px rgba(0,227,255,.1);}
+.admin-pw-field.error{border-color:#ff5f5f;box-shadow:0 0 0 3px rgba(255,95,95,.1);animation:shake .3s var(--ease);}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.admin-err{font-size:12.5px;color:#ff5f5f;text-align:center;min-height:18px;}
+
+.admin-panel{display:none;}
+.admin-panel.show{display:block;}
+.admin-tabs{display:flex;gap:8px;margin-bottom:28px;background:rgba(255,255,255,.04);border-radius:12px;padding:5px;}
+.admin-tab{
+  flex:1;padding:10px 16px;border-radius:8px;font-size:13.5px;font-weight:600;
+  color:var(--muted);cursor:pointer;text-align:center;
+  transition:background .3s,color .3s;border:none;background:transparent;
+}
+.admin-tab.active{background:var(--gradient);color:#03101a;}
+
+.admin-section-title{font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:16px;color:var(--muted);}
+
+/* Photo tab */
+.photo-upload-area{
+  border:2px dashed var(--border-strong);border-radius:var(--radius-md);
+  padding:36px 24px;text-align:center;cursor:pointer;
+  transition:border-color .3s,background .3s;margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.photo-upload-area:hover{border-color:var(--neon);background:rgba(0,227,255,.04);}
+.photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.photo-upload-icon{font-size:36px;color:var(--neon);margin-bottom:10px;display:block;}
+.photo-upload-area p{font-size:13.5px;color:var(--muted);}
+.photo-upload-area strong{color:var(--white);}
+.photo-preview{
+  display:none;width:90px;height:90px;border-radius:50%;margin:0 auto 14px;
+  object-fit:cover;border:2px solid var(--neon);box-shadow:0 0 20px rgba(0,227,255,.3);
+}
+.photo-preview.show{display:block;}
+.admin-actions{display:flex;gap:10px;margin-top:10px;}
+.admin-btn{
+  flex:1;padding:12px 18px;border-radius:100px;font-size:14px;font-weight:600;
+  cursor:pointer;text-align:center;transition:transform .3s,box-shadow .3s;
+}
+.admin-btn-primary{background:var(--gradient);color:#03101a;box-shadow:0 8px 20px -6px rgba(0,227,255,.5);}
+.admin-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px -6px rgba(0,227,255,.7);}
+.admin-btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--white);}
+.admin-btn-ghost:hover{border-color:var(--neon);color:var(--neon);}
+
+/* Badge tab */
+.badge-presets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.badge-preset{
+  padding:14px 16px;border-radius:12px;background:var(--surface);
+  border:1px solid var(--border);cursor:pointer;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:10px;
+  transition:border-color .3s,background .3s;
+}
+.badge-preset:hover{border-color:var(--border-strong);}
+.badge-preset.selected{border-color:var(--neon);background:rgba(0,227,255,.06);}
+.badge-preset-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.dot-green{background:#3ee07a;}
+.dot-yellow-c{background:#f5c842;}
+.dot-red-c{background:#ff5f5f;}
+.dot-blue-c{background:#5faeff;}
+
+.badge-custom-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;display:block;}
+.badge-custom-input{width:100%;padding:12px 16px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);color:var(--white);font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .3s;}
+.badge-custom-input:focus{border-color:var(--neon);}
+
+.admin-success{
+  text-align:center;padding:16px;border-radius:12px;
+  background:rgba(62,224,122,.08);border:1px solid rgba(62,224,122,.2);
+  color:#3ee07a;font-size:14px;font-weight:600;
+  display:none;margin-top:14px;
+}
+.admin-success.show{display:block;}
+
+/* Dev watermark inside admin */
+.admin-footer{
+  text-align:center;margin-top:24px;padding-top:18px;
+  border-top:1px solid var(--border);
+  font-size:12px;color:var(--muted-soft);
+  font-family:var(--font-mono);
+}
+.admin-footer span{color:var(--neon);}
+
+/* Secret hint */
+.dev-hint{
+  position:fixed;bottom:24px;right:24px;z-index:200;
+  font-family:var(--font-mono);font-size:11px;color:var(--muted-soft);
+  opacity:0;pointer-events:none;
+  transition:opacity .5s;
+}
+
+@media(max-width:768px){
+  .about-grid,.skills-grid,.contact-grid{grid-template-columns:1fr;}
+  .portfolio-grid{grid-template-columns:1fr 1fr;}
+  .nav-links,.nav-cta{display:none;}
+  .nav-burger{display:flex;}
+  .admin-modal{padding:28px 20px;}
+  .badge-presets{grid-template-columns:1fr;}
+}
+@media(max-width:480px){.portfolio-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <svg class="loader-ring" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="44"/>
+    </svg>
+    <span class="loader-mark">HSA</span>
+  </div>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- PARTICLES -->
+<canvas id="particles"></canvas>
+
+<!-- ADMIN OVERLAY -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h2><i class="fa-solid fa-screwdriver-wrench"></i> Developer Panel</h2>
+      <button class="admin-close" id="adminClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- LOCK SCREEN -->
+    <div id="adminLock" class="admin-lock">
+      <div class="admin-lock-icon"><i class="fa-solid fa-lock"></i></div>
+      <div>
+        <h3>Akses Terbatas</h3>
+        <p>Panel ini hanya untuk developer website.<br>Masukkan password untuk melanjutkan.</p>
+      </div>
+      <input type="password" class="admin-pw-field" id="adminPw" placeholder="••••••••" maxlength="32" autocomplete="off">
+      <div class="admin-err" id="adminErr"></div>
+      <button class="admin-btn admin-btn-primary" style="max-width:200px;width:100%;" onclick="checkAdminPw()">
+        <i class="fa-solid fa-unlock-keyhole"></i> Masuk
+      </button>
+    </div>
+
+    <!-- PANEL (after auth) -->
+    <div id="adminPanel" class="admin-panel">
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('photo',this)"><i class="fa-solid fa-image"></i> Foto Profil</button>
+        <button class="admin-tab" onclick="switchTab('badge',this)"><i class="fa-solid fa-circle-dot"></i> Badge Status</button>
+      </div>
+
+      <!-- PHOTO TAB -->
+      <div id="tabPhoto">
+        <p class="admin-section-title">Ganti Foto Profil</p>
+        <img id="photoPreview" class="photo-preview" src="" alt="Preview">
+        <div class="photo-upload-area" id="uploadArea">
+          <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(this)">
+          <span class="photo-upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+          <p><strong>Klik untuk upload foto</strong><br>JPG, PNG, WEBP · Maks 5MB</p>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-btn admin-btn-primary" onclick="applyPhoto()"><i class="fa-solid fa-check"></i> Terapkan</button>
+          <button class="admin-btn admin-btn-ghost" onclick="resetPhoto()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+        <div class="admin-success" id="photoSuccess"><i class="fa-solid fa-circle-check"></i> Foto berhasil diubah!</div>
+      </div>
+
+      <!-- BADGE TAB -->
+      <div id="tabBadge" style="display:none;">
+        <p class="admin-section-title">Pilih Badge Status</p>
+        <div class="badge-presets">
+          <div class="badge-preset selected" onclick="selectBadge(this,'Available for work','green')">
+            <span class="badge-preset-dot dot-green"></span>Available for work
+          </div>
+          <div class="badge-preset" onclick="selectBadge(this,'Sibuk sementara','yellow')">
+            <span class="badge-preset-dot dot-yellow-c"></span>Sibuk sementara
+          </div>
+          <div class="badge-preset" onclick="selectBadge(this,'Tidak tersedia','red')">
+            <span class="badge-preset-dot dot-red-c"></span>Tidak tersedia
+          </div>
+          <div class="badge-preset" onclick="selectBadge(this,'Open to collaborate','blue')">
+            <span class="badge-preset-dot dot-blue-c"></span>Open to collaborate
+          </div>
+        </div>
+        <span class="badge-custom-label">Atau tulis teks badge sendiri:</span>
+        <input type="text" class="badge-custom-input" id="badgeCustom" placeholder="cth: On a project · DM me!" maxlength="48">
+        <div class="admin-actions" style="margin-top:14px;">
+          <button class="admin-btn admin-btn-primary" onclick="applyBadge()"><i class="fa-solid fa-check"></i> Terapkan</button>
+          <button class="admin-btn admin-btn-ghost" onclick="resetBadge()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+        <div class="admin-success" id="badgeSuccess"><i class="fa-solid fa-circle-check"></i> Badge berhasil diubah!</div>
+      </div>
+
+      <div class="admin-footer">Hanya <span>developer</span> yang dapat mengakses panel ini.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DEV HINT -->
+<div class="dev-hint" id="devHint">🔧 klik logo 3× untuk dev panel</div>
+
+<!-- NAVBAR -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#" id="navLogo">Hafidh<span>.</span></a>
+    <div class="nav-links">
+      <a href="#about">Tentang</a>
+      <a href="#skills">Keahlian</a>
+      <a href="#portfolio">Portofolio</a>
+      <a href="#contact">Kontak</a>
+    </div>
+    <a href="#contact" class="btn btn-primary btn-small nav-cta">Hubungi Saya <i class="fa-solid fa-arrow-right"></i></a>
+    <button class="nav-burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">Tentang</a>
+  <a href="#skills" onclick="closeMobile()">Keahlian</a>
+  <a href="#portfolio" onclick="closeMobile()">Portofolio</a>
+  <a href="#contact" onclick="closeMobile()">Kontak</a>
+  <a href="#contact" class="btn btn-primary" onclick="closeMobile()">Hubungi Saya <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="aurora">
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+  </div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="status-pill" id="statusPill">
+      <span class="dot-pulse" id="statusDot"></span>
+      <span id="statusText">Available for work</span>
+    </div>
+
+    <!-- ANIMATED AVATAR -->
+    <div class="hero-photo">
+      <div class="hero-photo-glow"></div>
+      <div class="hero-photo-ring"></div>
+      <div class="hero-photo-inner" id="heroPhotoInner">
+        <span id="heroInitials">HSA</span>
+      </div>
+      <div class="hero-photo-orbit">
+        <span class="orbit-dot"></span>
+        <span class="orbit-dot orbit-dot-blue"></span>
+      </div>
+      <div class="hero-photo-orbit hero-photo-orbit-2">
+        <span class="orbit-dot orbit-dot-2-1"></span>
+        <span class="orbit-dot orbit-dot-2-2 orbit-dot-blue"></span>
+      </div>
+    </div>
+
+    <span class="eyebrow">// Hafidh Sabryan Alfatih</span>
+    <h1 class="hero-title">Kreatif.<br>Inovatif. <span style="background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent;">Digital.</span></h1>
+    <div class="hero-type">
+      <span>Saya seorang</span>
+      <span class="hero-type-text" id="typeText"></span>
+      <span class="type-cursor">|</span>
+    </div>
+    <p class="hero-tagline">"Menciptakan karya kreatif yang berdampak."</p>
+    <div class="hero-actions">
+      <a href="#portfolio" class="btn btn-primary"><i class="fa-solid fa-briefcase"></i> Lihat Portofolio</a>
+      <a href="#contact" class="btn btn-ghost"><i class="fa-regular fa-envelope"></i> Hubungi Saya</a>
+    </div>
+    <div class="hero-meta">
+      <span>📍 Indonesia, kalimantan selatan</span>
+      <span class="meta-sep">·</span>
+      <span>Pelajar & Kreator</span>
+      <span class="meta-sep">·</span>
+      <span>Est. 2025</span>
+    </div>
+  </div>
+  <div class="scroll-cue"><span></span></div>
+</section>
+
+<!-- ABOUT -->
+<section class="section section-alt" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <span class="section-eyebrow">// Tentang Saya</span>
+        <h2 class="section-title">Pelajar yang menciptakan dampak nyata</h2>
+        <p>Halo! Saya <em>Hafidh Sabryan Alfatih</em>, seorang pelajar aktif yang passionate di bidang <em>kreatif dan digital</em>. Saya percaya bahwa usia bukan batasan untuk berkarya dan berdampak.</p>
+        <p>Dari editing video yang memukau hingga desain UI/UX yang intuitif — saya terus mengeksplorasi cara baru untuk menyampaikan pesan yang kuat melalui media digital.</p>
+        <p>Di luar dunia kreatif, saya juga mengembangkan <em>jiwa entrepreneurship</em> dengan membangun solusi bisnis yang relevan untuk generasi muda Indonesia.</p>
+        <div class="about-info">
+          <div class="info-row">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <div><h4>Pelajar Aktif</h4><p>Mengejar ilmu sambil berkarya setiap hari</p></div>
+          </div>
+          <div class="info-row">
+            <i class="fa-solid fa-map-pin"></i>
+            <div><h4>Indonesia</h4><p>Berkarya lokal, berdampak global</p></div>
+          </div>
+          <div class="info-row">
+            <i class="fa-solid fa-calendar"></i>
+            <div><h4>Aktif sejak 2023</h4><p>Terus belajar dan berkembang</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="about-cards reveal" style="--delay:2">
+        <div class="stat-card">
+          <span class="stat-num">50+</span>
+          <span class="stat-label">Proyek Selesai</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">3+</span>
+          <span class="stat-label">Tahun Pengalaman</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">15+</span>
+          <span class="stat-label">Klien Puas</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Semangat Berkarya</span>
+        </div>
+        <div class="stat-card stat-card-wide">
+          <i class="fa-solid fa-quote-left"></i>
+          <p>"Setiap karya adalah cerminan dari dedikasi dan passion yang tidak pernah padam."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="section" id="skills">
+  <div class="container">
+    <span class="section-eyebrow reveal">// Keahlian</span>
+    <h2 class="section-title reveal">Apa yang saya kuasai</h2>
+    <p class="section-sub reveal">Skill yang terus saya asah setiap hari untuk memberikan hasil terbaik.</p>
+    <div class="skills-grid">
+      <div class="reveal">
+        <div class="skill-item">
+          <div class="skill-head"><span><i class="fa-solid fa-film"></i>Video Editing</span><span class="skill-percent">92%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="92"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head"><span><i class="fa-solid fa-palette"></i>Desain Grafis</span><span class="skill-percent">88%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="88"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head"><span><i class="fa-solid fa-layer-group"></i>UI / UX Design</span><span class="skill-percent">78%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="78"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head"><span><i class="fa-solid fa-code"></i>Web Development</span><span class="skill-percent">65%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="65"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head"><span><i class="fa-solid fa-chart-line"></i>Digital Marketing</span><span class="skill-percent">80%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="80"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head"><span><i class="fa-solid fa-lightbulb"></i>Bisnis & Entrepreneurship</span><span class="skill-percent">75%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="75"></div></div>
+        </div>
+      </div>
+      <div class="skills-side reveal" style="--delay:2">
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-video"></i> Video & Motion</h3>
+          <div class="tool-tags">
+            <span>Adobe Premiere</span><span>After Effects</span><span>DaVinci Resolve</span><span>CapCut Pro</span><span>Motion 5</span>
+          </div>
+        </div>
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-pen-nib"></i> Design & UI</h3>
+          <div class="tool-tags">
+            <span>Figma</span><span>Adobe Photoshop</span><span>Illustrator</span><span>Canva Pro</span><span>Framer</span>
+          </div>
+        </div>
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-rocket"></i> Business & Growth</h3>
+          <div class="tool-tags">
+            <span>Instagram</span><span>TikTok</span><span>Copywriting</span><span>Branding</span><span>Analytics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="section section-alt" id="portfolio">
+  <div class="container">
+    <span class="section-eyebrow reveal">// Portofolio</span>
+    <h2 class="section-title reveal">Karya pilihan</h2>
+    <p class="section-sub reveal">Beberapa proyek terbaik yang pernah saya kerjakan.</p>
+    <div class="portfolio-grid">
+      <div class="project-card reveal" style="--delay:1">
+        <div class="project-thumb thumb-1"><i class="fa-solid fa-store"></i></div>
+        <div class="project-body">
+          <h3>Rofers.store</h3>
+          <p>website untuk beli app premium.</p>
+          <div class="project-tags"><span>UI/UX</span><span>Branding</span><span>Collaborating</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" style="--delay:2">
+        <div class="project-thumb thumb-2"><i class="fa-solid fa-mobile-screen"></i></div>
+        <div class="project-body">
+          <h3>Design</h3>
+          <p>Desain UI/UX aplikasi mobile marketplace untuk UMKM Indonesia.</p>
+          <div class="project-tags"><span>Figma</span><span>UI/UX</span><span>Prototyping</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" style="--delay:3">
+        <div class="project-thumb thumb-3"><i class="fa-solid fa-video"></i></div>
+        <div class="project-body">
+          <h3>Editing</h3>
+          <p>Kampanye visual untuk brand F&B — desain konten 30 hari non-stop.</p>
+          <div class="project-tags"><span>After Effects</span><span>Capcut</span><span>Alight motion</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" style="--delay:1">
+        <div class="project-thumb thumb-4"><i class="fa-solid fa-globe"></i></div>
+        <div class="project-body">
+          <h3>Company Profile Website</h3>
+          <p>Website profil perusahaan dengan animasi modern dan performa tinggi.</p>
+          <div class="project-tags"><span>HTML/CSS</span><span>JavaScript</span><span>GSAP</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" style="--delay:2">
+        <div class="project-thumb thumb-5"><i class="fa-solid fa-store"></i></div>
+        <div class="project-body">
+          <h3>E-Commerce Branding</h3>
+          <p>Identitas visual lengkap untuk toko online, dari logo hingga packaging digital.</p>
+          <div class="project-tags"><span>Illustrator</span><span>Branding</span><span>Identity</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" style="--delay:3">
+        <div class="project-thumb thumb-6"><i class="fa-solid fa-music"></i></div>
+        <div class="project-body">
+          <h3>Music Video Edit</h3>
+          <p>Edit video musik untuk artis indie lokal dengan efek visual yang memukau.</p>
+          <div class="project-tags"><span>After Effects</span><span>DaVinci</span><span>VFX</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <span class="section-eyebrow">// Kontak</span>
+        <h2 class="section-title">Mari berkolaborasi!</h2>
+        <p class="contact-text" style="margin-bottom:28px;">Punya proyek seru atau ingin diskusi? Jangan ragu untuk menghubungi saya. Saya selalu terbuka untuk ide-ide baru dan kolaborasi kreatif.</p>
+        <div class="contact-links">
+          <a href="mailto:hafidh@example.com" class="contact-link">
+            <i class="fa-regular fa-envelope"></i>
+            <div class="contact-link-text"><span>Email</span><strong>hafidsaa.0@gmail.com</strong></div>
+          </a>
+          <a href="https://instagram.com/" target="_blank" class="contact-link">
+            <i class="fa-brands fa-instagram"></i>
+            <div class="contact-link-text"><span>Instagram</span><strong>@lrofers</strong></div>
+          </a>
+          <a href="https://wa.me/" target="_blank" class="contact-link">
+            <i class="fa-brands fa-whatsapp"></i>
+            <div class="contact-link-text"><span>WhatsApp</span><strong>+62-853-4939-1484</strong></div>
+          </a>
+        </div>
+      </div>
+      <div class="reveal" style="--delay:2">
+        <div class="form-group"><label>Nama</label><input type="text" placeholder="Nama kamu"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="email@kamu.com"></div>
+        <div class="form-group"><label>Pesan</label><textarea placeholder="Ceritakan proyekmu..."></textarea></div>
+        <button class="btn btn-primary" style="width:100%;">Kirim Pesan <i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Hafidh<span>.</span></div>
+      <div class="footer-socials">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+      </div>
+      <p class="footer-copy">© 2025 Hafidh Sabryan Alfatih. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ==================== CONFIG ====================
+const ADMIN_PASSWORD = "hafidh2025dev"; // Ganti password di sini
+
+// ==================== LOADER ====================
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),1200);
+});
+
+// ==================== CURSOR ====================
+const dot=document.getElementById('cursorDot'), ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.14;ry+=(my-ry)*.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.project-card,.stat-card,.contact-link,.badge-preset,.photo-upload-area').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('hovered'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('hovered'));
+});
+
+// ==================== NAVBAR ====================
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
+});
+const burger=document.getElementById('burger'), mob=document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>{burger.classList.toggle('open');mob.classList.toggle('open');});
+function closeMobile(){burger.classList.remove('open');mob.classList.remove('open');}
+
+// ==================== PARTICLES ====================
+(()=>{
+  const c=document.getElementById('particles'), ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<70;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,227,255,0.45)';ctx.fill();
+    });
+    pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(59,109,255,${.18*(1-d/120)})`;ctx.lineWidth=.7;ctx.stroke();}
+    }));
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ==================== TYPEWRITER ====================
+const roles=['Editor Video','Desainer Grafis','UI/UX Designer','Pembisnis Muda','Content Creator'];
+let ri=0,ci=0,del=false;
+const tEl=document.getElementById('typeText');
+function type(){
+  const cur=roles[ri];
+  tEl.textContent=del?cur.slice(0,ci--):cur.slice(0,ci++);
+  if(!del&&ci>cur.length){del=true;setTimeout(type,1400);return;}
+  if(del&&ci<0){del=false;ri=(ri+1)%roles.length;ci=0;}
+  setTimeout(type,del?55:90);
+}
+type();
+
+// ==================== REVEAL ====================
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// ==================== SKILL BARS ====================
+const skillObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.querySelectorAll('.skill-fill').forEach(b=>{b.style.width=b.dataset.w+'%';});skillObs.unobserve(e.target);}
+  });
+},{threshold:.3});
+document.querySelectorAll('.skills-grid').forEach(el=>skillObs.observe(el));
+
+// ==================== ADMIN: SECRET TRIGGER ====================
+let logoClicks=0, logoTimer=null;
+const hint=document.getElementById('devHint');
+document.getElementById('navLogo').addEventListener('click',e=>{
+  e.preventDefault();
+  logoClicks++;
+  if(logoClicks===1){
+    hint.style.opacity='1';
+    clearTimeout(logoTimer);
+    logoTimer=setTimeout(()=>{logoClicks=0;hint.style.opacity='0';},2200);
+  }
+  if(logoClicks>=3){
+    logoClicks=0;clearTimeout(logoTimer);hint.style.opacity='0';
+    openAdmin();
+  }
+});
+
+function openAdmin(){
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminPw').value='';
+  document.getElementById('adminErr').textContent='';
+  document.getElementById('adminLock').style.display='flex';
+  document.getElementById('adminPanel').classList.remove('show');
+  setTimeout(()=>document.getElementById('adminPw').focus(),300);
+}
+document.getElementById('adminClose').addEventListener('click',()=>{
+  document.getElementById('adminOverlay').classList.remove('open');
+});
+document.getElementById('adminOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('adminOverlay'))document.getElementById('adminOverlay').classList.remove('open');
+});
+document.getElementById('adminPw').addEventListener('keydown',e=>{if(e.key==='Enter')checkAdminPw();});
+
+function checkAdminPw(){
+  const pw=document.getElementById('adminPw').value;
+  const field=document.getElementById('adminPw');
+  const err=document.getElementById('adminErr');
+  if(pw===ADMIN_PASSWORD){
+    document.getElementById('adminLock').style.display='none';
+    document.getElementById('adminPanel').classList.add('show');
+    err.textContent='';
+  } else {
+    field.classList.add('error');
+    err.textContent='Password salah. Coba lagi.';
+    setTimeout(()=>field.classList.remove('error'),400);
+    field.value='';field.focus();
+  }
+}
+
+// ==================== ADMIN TABS ====================
+function switchTab(tab,el){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tabPhoto').style.display=tab==='photo'?'block':'none';
+  document.getElementById('tabBadge').style.display=tab==='badge'?'block':'none';
+  document.getElementById('photoSuccess').classList.remove('show');
+  document.getElementById('badgeSuccess').classList.remove('show');
+}
+
+// ==================== PHOTO MANAGEMENT ====================
+let pendingPhoto=null;
+
+function handlePhotoUpload(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>5*1024*1024){alert('Ukuran file terlalu besar! Maks 5MB.');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pendingPhoto=e.target.result;
+    const prev=document.getElementById('photoPreview');
+    prev.src=pendingPhoto;prev.classList.add('show');
+    document.querySelector('.photo-upload-area p').innerHTML='<strong>Foto dipilih!</strong><br>Klik "Terapkan" untuk menyimpan.';
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyPhoto(){
+  if(!pendingPhoto){alert('Pilih foto terlebih dahulu!');return;}
+  const inner=document.getElementById('heroPhotoInner');
+  // Remove existing img if any
+  const oldImg=inner.querySelector('img');if(oldImg)oldImg.remove();
+  const oldSpan=inner.querySelector('span');if(oldSpan)oldSpan.style.display='none';
+  const img=document.createElement('img');
+  img.src=pendingPhoto;img.alt='Foto Profil';
+  inner.appendChild(img);
+  // Save to localStorage for session
+  try{localStorage.setItem('hsa_photo',pendingPhoto);}catch(e){}
+  document.getElementById('photoSuccess').classList.add('show');
+  setTimeout(()=>document.getElementById('photoSuccess').classList.remove('show'),3000);
+}
+
+function resetPhoto(){
+  pendingPhoto=null;
+  const inner=document.getElementById('heroPhotoInner');
+  const oldImg=inner.querySelector('img');if(oldImg)oldImg.remove();
+  const oldSpan=inner.querySelector('span');
+  if(oldSpan)oldSpan.style.display='';
+  else{
+    const s=document.createElement('span');s.id='heroInitials';s.textContent='HSA';inner.appendChild(s);
+  }
+  document.getElementById('photoPreview').classList.remove('show');
+  document.getElementById('photoInput').value='';
+  document.querySelector('.photo-upload-area p').innerHTML='<strong>Klik untuk upload foto</strong><br>JPG, PNG, WEBP · Maks 5MB';
+  try{localStorage.removeItem('hsa_photo');}catch(e){}
+}
+
+// ==================== BADGE MANAGEMENT ====================
+let selectedBadgeColor='green', selectedBadgeText='Available for work';
+
+function selectBadge(el,text,color){
+  document.querySelectorAll('.badge-preset').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedBadgeText=text;selectedBadgeColor=color;
+  document.getElementById('badgeCustom').value='';
+}
+
+function applyBadge(){
+  const customText=document.getElementById('badgeCustom').value.trim();
+  const finalText=customText||selectedBadgeText;
+  const finalColor=customText?'blue':selectedBadgeColor;
+
+  const dot=document.getElementById('statusDot');
+  const textEl=document.getElementById('statusText');
+
+  textEl.textContent=finalText;
+  dot.className='dot-pulse';
+  if(finalColor==='yellow')dot.classList.add('dot-yellow');
+  else if(finalColor==='red')dot.classList.add('dot-red');
+  else if(finalColor==='blue')dot.classList.add('dot-blue');
+
+  try{localStorage.setItem('hsa_badge',JSON.stringify({text:finalText,color:finalColor}));}catch(e){}
+  document.getElementById('badgeSuccess').classList.add('show');
+  setTimeout(()=>document.getElementById('badgeSuccess').classList.remove('show'),3000);
+}
+
+function resetBadge(){
+  const dot=document.getElementById('statusDot');
+  const textEl=document.getElementById('statusText');
+  textEl.textContent='Available for work';
+  dot.className='dot-pulse';
+  document.getElementById('badgeCustom').value='';
+  document.querySelectorAll('.badge-preset').forEach((p,i)=>{p.classList.toggle('selected',i===0);});
+  selectedBadgeText='Available for work';selectedBadgeColor='green';
+  try{localStorage.removeItem('hsa_badge');}catch(e){}
+}
+
+// ==================== RESTORE SESSION ====================
+(()=>{
+  try{
+    const p=localStorage.getItem('hsa_photo');
+    if(p){
+      const inner=document.getElementById('heroPhotoInner');
+      const span=inner.querySelector('span');if(span)span.style.display='none';
+      const img=document.createElement('img');img.src=p;img.alt='Foto Profil';inner.appendChild(img);
+    }
+    const b=JSON.parse(localStorage.getItem('hsa_badge')||'null');
+    if(b){
+      document.getElementById('statusText').textContent=b.text;
+      const dot=document.getElementById('statusDot');
+      dot.className='dot-pulse';
+      if(b.color==='yellow')dot.classList.add('dot-yellow');
+      else if(b.color==='red')dot.classList.add('dot-red');
+      else if(b.color==='blue')dot.classList.add('dot-blue');
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
