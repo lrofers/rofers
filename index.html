@@ -784,10 +784,14 @@ button{font-family:inherit;cursor:none;border:none;background:none;}
 // ==================== CONFIG ====================
 const ADMIN_PASSWORD = "hafidh2025dev"; // Ganti password di sini
 
+// JSONBin config — daftar gratis di https://jsonbin.io lalu isi 2 baris ini:
+const JSONBIN_API_KEY = ""; // contoh: "$2a$10$abcdef..."
+const JSONBIN_BIN_ID  = ""; // contoh: "6650abc123def456"
+
 // ==================== LOADER ====================
-window.addEventListener('load',()=>{
-  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),1200);
-});
+function hideLoader(){document.getElementById('loader').classList.add('hidden');}
+window.addEventListener('load',()=>setTimeout(hideLoader,900));
+setTimeout(hideLoader,1500);
 
 // ==================== CURSOR ====================
 const dot=document.getElementById('cursorDot'), ring=document.getElementById('cursorRing');
@@ -917,6 +921,66 @@ function switchTab(tab,el){
   document.getElementById('badgeSuccess').classList.remove('show');
 }
 
+// ==================== JSONBIN HELPERS ====================
+// Data disimpan di cloud → semua pengunjung melihat foto & badge yang sama
+
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+const JSONBIN_HEADERS = {
+  'Content-Type':'application/json',
+  'X-Master-Key': JSONBIN_API_KEY,
+  'X-Bin-Versioning':'false'
+};
+
+// Ambil data dari JSONBin
+async function dbGet(){
+  if(!JSONBIN_API_KEY||!JSONBIN_BIN_ID) return null;
+  try{
+    const r=await fetch(JSONBIN_URL,{headers:{'X-Master-Key':JSONBIN_API_KEY}});
+    const j=await r.json();
+    return j.record||null;
+  }catch(e){return null;}
+}
+
+// Simpan data ke JSONBin
+async function dbSet(data){
+  if(!JSONBIN_API_KEY||!JSONBIN_BIN_ID){
+    // Jika belum setup JSONBin, simpan ke localStorage sebagai fallback
+    try{localStorage.setItem('hsa_data',JSON.stringify(data));}catch(e){}
+    return;
+  }
+  try{
+    await fetch(JSONBIN_URL,{method:'PUT',headers:JSONBIN_HEADERS,body:JSON.stringify(data)});
+  }catch(e){}
+}
+
+// Baca data saat ini dari db (atau localStorage fallback)
+async function getCurrentData(){
+  const d=await dbGet();
+  if(d) return d;
+  // fallback localStorage
+  try{return JSON.parse(localStorage.getItem('hsa_data')||'{}');}catch(e){return {};}
+}
+
+// ==================== FOTO HELPER ====================
+function setPhotoOnPage(src){
+  const inner=document.getElementById('heroPhotoInner');
+  const oldImg=inner.querySelector('img');if(oldImg)oldImg.remove();
+  const oldSpan=inner.querySelector('span');if(oldSpan)oldSpan.style.display='none';
+  const img=document.createElement('img');
+  img.src=src;img.alt='Foto Profil';
+  inner.appendChild(img);
+}
+
+// ==================== BADGE HELPER ====================
+function setBadgeOnPage(text,color){
+  document.getElementById('statusText').textContent=text;
+  const dot=document.getElementById('statusDot');
+  dot.className='dot-pulse';
+  if(color==='yellow')dot.classList.add('dot-yellow');
+  else if(color==='red')dot.classList.add('dot-red');
+  else if(color==='blue')dot.classList.add('dot-blue');
+}
+
 // ==================== PHOTO MANAGEMENT ====================
 let pendingPhoto=null;
 
@@ -934,34 +998,29 @@ function handlePhotoUpload(input){
   reader.readAsDataURL(file);
 }
 
-function applyPhoto(){
+async function applyPhoto(){
   if(!pendingPhoto){alert('Pilih foto terlebih dahulu!');return;}
-  const inner=document.getElementById('heroPhotoInner');
-  // Remove existing img if any
-  const oldImg=inner.querySelector('img');if(oldImg)oldImg.remove();
-  const oldSpan=inner.querySelector('span');if(oldSpan)oldSpan.style.display='none';
-  const img=document.createElement('img');
-  img.src=pendingPhoto;img.alt='Foto Profil';
-  inner.appendChild(img);
-  // Save to localStorage for session
-  try{localStorage.setItem('hsa_photo',pendingPhoto);}catch(e){}
+  setPhotoOnPage(pendingPhoto);
+  const cur=await getCurrentData();
+  cur.photo=pendingPhoto;
+  await dbSet(cur);
   document.getElementById('photoSuccess').classList.add('show');
   setTimeout(()=>document.getElementById('photoSuccess').classList.remove('show'),3000);
 }
 
-function resetPhoto(){
+async function resetPhoto(){
   pendingPhoto=null;
   const inner=document.getElementById('heroPhotoInner');
   const oldImg=inner.querySelector('img');if(oldImg)oldImg.remove();
   const oldSpan=inner.querySelector('span');
   if(oldSpan)oldSpan.style.display='';
-  else{
-    const s=document.createElement('span');s.id='heroInitials';s.textContent='HSA';inner.appendChild(s);
-  }
+  else{const s=document.createElement('span');s.id='heroInitials';s.textContent='HSA';inner.appendChild(s);}
   document.getElementById('photoPreview').classList.remove('show');
   document.getElementById('photoInput').value='';
   document.querySelector('.photo-upload-area p').innerHTML='<strong>Klik untuk upload foto</strong><br>JPG, PNG, WEBP · Maks 5MB';
-  try{localStorage.removeItem('hsa_photo');}catch(e){}
+  const cur=await getCurrentData();
+  delete cur.photo;
+  await dbSet(cur);
 }
 
 // ==================== BADGE MANAGEMENT ====================
@@ -974,54 +1033,37 @@ function selectBadge(el,text,color){
   document.getElementById('badgeCustom').value='';
 }
 
-function applyBadge(){
+async function applyBadge(){
   const customText=document.getElementById('badgeCustom').value.trim();
   const finalText=customText||selectedBadgeText;
   const finalColor=customText?'blue':selectedBadgeColor;
-
-  const dot=document.getElementById('statusDot');
-  const textEl=document.getElementById('statusText');
-
-  textEl.textContent=finalText;
-  dot.className='dot-pulse';
-  if(finalColor==='yellow')dot.classList.add('dot-yellow');
-  else if(finalColor==='red')dot.classList.add('dot-red');
-  else if(finalColor==='blue')dot.classList.add('dot-blue');
-
-  try{localStorage.setItem('hsa_badge',JSON.stringify({text:finalText,color:finalColor}));}catch(e){}
+  setBadgeOnPage(finalText,finalColor);
+  const cur=await getCurrentData();
+  cur.badge={text:finalText,color:finalColor};
+  await dbSet(cur);
   document.getElementById('badgeSuccess').classList.add('show');
   setTimeout(()=>document.getElementById('badgeSuccess').classList.remove('show'),3000);
 }
 
-function resetBadge(){
-  const dot=document.getElementById('statusDot');
-  const textEl=document.getElementById('statusText');
-  textEl.textContent='Available for work';
-  dot.className='dot-pulse';
+async function resetBadge(){
+  setBadgeOnPage('Available for work','green');
   document.getElementById('badgeCustom').value='';
-  document.querySelectorAll('.badge-preset').forEach((p,i)=>{p.classList.toggle('selected',i===0);});
+  document.querySelectorAll('.badge-preset').forEach((p,i)=>p.classList.toggle('selected',i===0));
   selectedBadgeText='Available for work';selectedBadgeColor='green';
-  try{localStorage.removeItem('hsa_badge');}catch(e){}
+  const cur=await getCurrentData();
+  delete cur.badge;
+  await dbSet(cur);
 }
 
-// ==================== RESTORE SESSION ====================
-(()=>{
+// ==================== RESTORE STATE DARI CLOUD ====================
+// Saat halaman dibuka, ambil foto & badge dari JSONBin
+// → semua pengunjung otomatis lihat versi terbaru
+(async()=>{
   try{
-    const p=localStorage.getItem('hsa_photo');
-    if(p){
-      const inner=document.getElementById('heroPhotoInner');
-      const span=inner.querySelector('span');if(span)span.style.display='none';
-      const img=document.createElement('img');img.src=p;img.alt='Foto Profil';inner.appendChild(img);
-    }
-    const b=JSON.parse(localStorage.getItem('hsa_badge')||'null');
-    if(b){
-      document.getElementById('statusText').textContent=b.text;
-      const dot=document.getElementById('statusDot');
-      dot.className='dot-pulse';
-      if(b.color==='yellow')dot.classList.add('dot-yellow');
-      else if(b.color==='red')dot.classList.add('dot-red');
-      else if(b.color==='blue')dot.classList.add('dot-blue');
-    }
+    const d=await getCurrentData();
+    if(!d) return;
+    if(d.photo) setPhotoOnPage(d.photo);
+    if(d.badge) setBadgeOnPage(d.badge.text, d.badge.color);
   }catch(e){}
 })();
 </script>
